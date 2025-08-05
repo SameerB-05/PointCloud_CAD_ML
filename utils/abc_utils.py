@@ -13,10 +13,23 @@ def map_type_gt(T_gt):
     T_gt[T_gt == 8] = 2
     return T_gt
 
+def compute_bandwidth(X, num_samples=5000, quantile=0.05):
+    N = X.shape[0]
+    idx = torch.randperm(N)[:num_samples]
+    X_sample = X[idx]
+    dist = 2 - 2 * X_sample @ X_sample.T  # cosine distance on hypersphere
+    K = int(quantile * num_samples)
+    top_k = torch.topk(dist, k=K, dim=1, largest=False)[0]
+    max_top_k = torch.sqrt(top_k[:, -1].clamp(min=1e-6))
+    return torch.mean(max_top_k)
+
 def mean_shift(x, bandwidth):
     # x: [N, f]
     b, N, c = x.shape
     IDX = torch.zeros(b, N).to(x.device).long()
+
+    #bw = compute_bandwidth(x.view(-1, c), num_samples=min(5000, N), quantile=0.45).item()
+    #print(f'Using bandwidth: {bw}')
     ms = MeanShift(bandwidth=bandwidth, bin_seeding=False, n_jobs=8)
     x_np = x.data.cpu().numpy()
     for i in range(b):

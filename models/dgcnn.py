@@ -285,7 +285,8 @@ class PrimitivesEmbeddingDGCNGn(nn.Module):
         if postprocess:
             np.random.seed(1234)
         np.random.shuffle(l)
-        random_index = torch.from_numpy(l[:7000])
+        cnt = min(10000, N)
+        random_index = torch.from_numpy(l[:cnt])
 
         if self.mode == 5:
             points = torch.cat([points, normals], dim=-1)

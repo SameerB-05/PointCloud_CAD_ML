@@ -19,11 +19,15 @@ def cuda_time():
 
 
 class Trainer(object):
-    def __init__(self, opt):
+    def __init__(self, opt, skip_data=False):
         self.opt = opt
 
         self.build_workspace()
-        self.build_dataloader()
+        #self.build_dataloader()
+
+        if not skip_data:  # <-- only build dataloader if not skipping
+            self.build_dataloader()
+        
         self.build_model_optimizer()
 
         # TFBoard visualizer

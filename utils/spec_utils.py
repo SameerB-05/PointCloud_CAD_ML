@@ -148,7 +148,18 @@ def pca_torch(X):
     # TODO 2Change this to do SVD, because it is stable and computationally
     # less intensive.
     covariance = torch.transpose(X, 1, 0) @ X
-    S, U = torch.eig(covariance, eigenvectors=True)
+    #S, U = torch.eig(covariance, eigenvectors=True)
+
+    # eigen‑decomposition
+    eigvals, eigvecs = torch.linalg.eig(covariance)          # complex
+    eigvals = eigvals.real                                   # take real part  ➜ shape (N,)
+    eigvecs = eigvecs.real                                   # take real part  ➜ shape (N,N)
+
+    # old code expected S to be (N,2); we only need the *real* column
+    S = eigvals.unsqueeze(1)                                 # shape (N,1) so S[:,0] works
+    U = eigvecs                                              # already correct shape
+
+
     return S, U
 
 def rotation_matrix_a_to_b(A, B):
