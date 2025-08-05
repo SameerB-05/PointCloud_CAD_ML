@@ -5,8 +5,13 @@ from src.fitting_utils import pca_numpy
 
 # from src.segment_loss import EmbeddingLoss
 from src.mean_shift import MeanShift
-from src.segment_utils import rotation_matrix_a_to_b
+"""from src.segment_utils import rotation_matrix_a_to_b"""
 
+from src.fitting_utils import rotation_matrix_a_to_b
+
+
+import torch
+import os
 
 def guard_mean_shift(embedding, quantile, iterations, kernel_type="gaussian"):
     """
@@ -87,7 +92,23 @@ if __name__ == "__main__":
 
     cluster_ids = cluster_ids.data.cpu().numpy()
 
+    # Define safe output path
+    safe_out_path = "/output"
+    os.makedirs(safe_out_path, exist_ok=True)
+
+    # Construct filename
+    input_name = os.path.basename(cfg.path_in).replace(".xyz", "_prediction.xyzc")
+    out_path = os.path.join(safe_out_path, input_name)
+
+    # Save
     np.savetxt(
-        cfg.path_in.replace(".xyz", "_prediction.xyzc"),
+        out_path,
         np.hstack([points.detach().cpu().numpy()[0], cluster_ids[:, None]]),
     )
+    print(f"Saved predicted .xyzc to {out_path}")
+
+
+    """np.savetxt(
+        cfg.path_in.replace(".xyz", "_prediction.xyzc"),
+        np.hstack([points.detach().cpu().numpy()[0], cluster_ids[:, None]]),
+    )"""
