@@ -1,6 +1,6 @@
 # PointCloud_CAD_ML
 
-This repository integrates and builds upon third-party projects for research and educational purposes.
+This repository integrates and builds upon third-party projects for research purposes.
 
 ## Third-Party Code Acknowledgement
 
